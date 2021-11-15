@@ -1,5 +1,5 @@
 import Post from '../models/post.js'
-import router from '../routes/posts.js'
+import Comment from '../models/comment.js'
 
 // == GET ALL ==
 export async function getAllPosts(req, res) {
@@ -28,7 +28,8 @@ export async function getPost(req, res) {
     if (!post) {
       return res.status(404).send({error: 'No post exists with that id'})
     }
-    res.send(post)
+    const comments = await Comment.find({ post_id: req.params.id })
+    res.send({ post, comments })
   } catch (error) {
     res.status(500).send({error: error.message})
   }
@@ -67,8 +68,9 @@ export async function deletePost(req, res) {
   try {
     const post = await Post.findOneAndDelete({ _id: req.params.id, author_id: req.userId })
     if (!post) {
-      res.status(404).send({error: 'Request cannot be processed'})
+      return res.status(404).send({error: 'Request cannot be processed'})
     }
+    await Comment.deleteMany({ post_id: req.params.id })
     res.send(post)
   } catch (error) {
     res.status(500).send({error: error.message})
