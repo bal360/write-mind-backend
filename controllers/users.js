@@ -51,5 +51,25 @@ export async function signUp(req, res) {
 }
 
 // == SIGNIN (GET USER)==
+export async function signIn(req, res) {
+  const { email, password } = req.body
+
+  try {
+    const user = await User.findOne({ email })
+    if (!user) {
+      return res.status(400).send({error: 'Email not found'})
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+      return res.status(400).send({error: 'Invalid credentials'})
+    }
+
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '3hr' })
+    res.send({result: user, token})
+  } catch (error) {
+    res.status(500).send({error: error.message})
+  }
+}
 
 // == UPLOAD IMAGE TO PROFILE (ONLY AVAILABLE FROM PROFILE PAGE ONCE ACCOUNT IS CREATED) ==
