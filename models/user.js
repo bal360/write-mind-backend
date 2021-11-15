@@ -21,7 +21,13 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 })
 
-// *** add in .JSON method to delete password AND picture from being passed back to user ***
+// removes password from user object before any calls to .send()
+userSchema.methods.toJSON = function() {
+  const user = this
+  const userObject = user.toObject()
+  delete userObject.password
+  return userObject
+}
 
 const User = mongoose.model('User', userSchema)
 
