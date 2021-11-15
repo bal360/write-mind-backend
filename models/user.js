@@ -21,6 +21,8 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 })
 
+// *** add in .JSON method to delete password AND picture from being passed back to user ***
+
 const User = mongoose.model('User', userSchema)
 
 export default User

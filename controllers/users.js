@@ -1,24 +1,7 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import multer from 'multer'
 import sharp from 'sharp'
 import User from '../models/user.js'
-
-
-// == MULTER IMAGE UPLOAD SET UP ==
-// const upload = multer({ 
-//   limits: {
-//     fileSize: 1000000
-//   },
-//   fileFilter(req, file, callback) {
-//     const regex = /\.(jpg|jpeg|png)$/i
-//     if (!file.originalname.match(regex)) {
-//       return callback(new Error('Must be a jpg, jpeg, or png file'))
-//     }
-//     callback(undefined, true)
-//   } 
-// })
-
 
 // == SIGNUP (CREATE USER) ==
 export async function signUp(req, res) {
@@ -50,7 +33,7 @@ export async function signUp(req, res) {
   }
 }
 
-// == SIGNIN (GET USER)==
+// == SIGNIN ==
 export async function signIn(req, res) {
   const { email, password } = req.body
 
@@ -72,4 +55,24 @@ export async function signIn(req, res) {
   }
 }
 
-// == UPLOAD IMAGE TO PROFILE (ONLY AVAILABLE FROM PROFILE PAGE ONCE ACCOUNT IS CREATED) ==
+// == GET USER (PERSONAL PROFILE) ==
+export async function getUser(req, res) {
+  res.send(req.user)
+}
+
+// == POST (upload picture) ==
+export async function uploadProfilePicture(req, res) {
+  try {
+    const buffer = await sharp(req.file.buffer)
+    .png()
+    .resize(300)
+    .rotate()
+    .toBuffer()
+    console.log('checking buffer:', buffer)
+    req.user.picture = buffer
+    await req.user.save()
+    res.send()
+  } catch (err) {
+    res.status(400).send({ error: err.message })
+  }
+}

@@ -16,6 +16,7 @@ async function auth(req, res, next) {
     }
 
     req.userId = decoded?._id
+    req.user = currentUser
     next()
   } catch (error) {
     res.status(401).send({ error: error.message })
