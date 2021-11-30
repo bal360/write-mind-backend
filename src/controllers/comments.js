@@ -10,6 +10,6 @@ export async function createComment(req, res) {
     await comment.save()
     res.status(201).send(comment)
   } catch (error) {
-    res.status(400).send({error: error.message})
+    res.status(400).send({ error: error.message })
   }
 }
