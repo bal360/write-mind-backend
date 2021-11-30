@@ -1,8 +1,7 @@
-import { jest } from '@jest/globals';
 import mongoose from 'mongoose'
 import request from 'supertest'
-import app from '../src/app.js'
-import User from '../src/models/user.js'
+import app from '../app.js'
+import User from '../models/user.js'
 
 beforeEach(async () => {
   await User.deleteMany()
@@ -26,17 +25,18 @@ test('Should create new user', async () => {
     })
     .expect(201)
 
-    // check that user is in db
-    const user = await User.findById(response.body.result._id)
-    expect(user).not.toBeNull()
+  // check that user is in db
+  const user = await User.findById(response.body.result._id)
+  expect(user).not.toBeNull()
 
-    // check for matching properties
-    expect(response.body).toMatchObject({
-      result: {
-        name: 'Blake Long',
-        email:  'blake@email.com'
-      } 
-    })
-    // confirm password is not stored in plain text
-    expect(user.password).not.toBe('test123')
+  // check for matching properties
+  expect(response.body).toMatchObject({
+    result: {
+      name: 'Blake Long',
+      email:  'blake@email.com'
+    } 
+  })
+  
+  // confirm password is not stored in plain text
+  expect(user.password).not.toBe('test123')
 })
